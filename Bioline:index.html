@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepGen AI // CMLRE Initiative</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Font Awesome for icons -->
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Embedded CSS -->
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #000000;
+            color: #e5e7eb;
+            --grid-color: rgba(255, 255, 255, 0.07);
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        #bg-dna-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+        .card {
+            background-color: rgba(0,0,0,0.5);
+            border: 1px solid #27272a;
+            backdrop-filter: blur(10px);
+        }
+        .btn-primary {
+            background-color: transparent;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            border: 1px solid #ffffff;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .btn-primary:hover {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Styles for the restyled animated login form */
+        .social-dark {
+            @apply border border-zinc-700 rounded-full inline-flex justify-center items-center m-1 h-10 w-10 text-gray-400 hover:bg-zinc-800 transition-colors;
+        }
+        .form-input-dark {
+            @apply bg-black border border-zinc-700 p-3 my-2 w-full focus:outline-none focus:ring-1 focus:ring-white text-white;
+        }
+        .form-button-dark {
+            @apply rounded-full border border-white bg-white text-black text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform duration-75 ease-in active:scale-95 focus:outline-none;
+        }
+        .ghost-button-dark {
+            @apply rounded-full border border-white bg-transparent text-white text-xs font-bold py-3 px-11 tracking-wider uppercase transition-transform duration-75 ease-in active:scale-95 focus:outline-none;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <canvas id="bg-dna-canvas"></canvas>
+    <div class="content-wrapper">
+
+        <!-- ======================= LANDING PAGE VIEW ======================= -->
+        <div id="homePage">
+            <header class="fixed top-0 left-0 right-0 z-50">
+                <nav class="container mx-auto px-6 py-4 flex justify-between items-center border-b border-gray-800 bg-black/50 backdrop-blur-md">
+                    <div class="text-lg font-bold text-white tracking-widest"><a href="#">DEEPGEN_AI</a></div>
+                    <button id="loginBtn" class="btn-primary font-medium py-2 px-4 text-xs">Engage Platform</button>
+                </nav>
+            </header>
+
+            <main class="container mx-auto px-6">
+                <section class="min-h-screen flex flex-col justify-center items-start pt-20">
+                    <div class="w-full lg:w-1/2">
+                        <h1 id="scramble-text" class="text-3xl md:text-5xl font-bold text-white leading-tight mb-4"></h1>
+                        <p class="text-base text-gray-400 mb-8 font-light max-w-lg">
+                            A high-throughput pipeline to classify eukaryotic taxa and assess deep-sea biodiversity, bypassing the limitations of conventional reference databases.
+                        </p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- ========================= LOGIN PAGE VIEW ========================= -->
+        <div id="loginPage" class="hidden min-h-screen flex items-center justify-center p-4">
+            <div class="relative w-full max-w-4xl min-h-[550px] bg-black/50 border border-zinc-800 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden">
+                <div id="signUpPanel" class="absolute top-0 h-full transition-all duration-700 ease-in-out left-0 w-1/2 opacity-0 z-10">
+                    <form class="bg-black/20 flex items-center justify-center flex-col px-10 h-full text-center">
+                        <h1 class="font-bold text-3xl mb-4 text-white">Create Account</h1>
+                        <div class="flex my-2">
+                            <a href="#" class="social-dark"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-dark"><i class="fab fa-google-plus-g"></i></a>
+                            <a href="#" class="social-dark"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                        <span class="text-gray-400 text-sm">or use your email for registration</span>
+                        <input type="text" placeholder="Name" class="form-input-dark" />
+                        <input type="email" placeholder="Email" class="form-input-dark" />
+                        <input type="password" placeholder="Password" class="form-input-dark" />
+                        <button type="button" class="form-button-dark mt-4">Sign Up</button>
+                    </form>
+                </div>
+                <div id="signInPanel" class="absolute top-0 h-full transition-all duration-700 ease-in-out left-0 w-1/2 opacity-100 z-20">
+                   <form class="bg-black/20 flex items-center justify-center flex-col px-10 h-full text-center">
+                    <h1 class="font-bold text-3xl mb-4 text-white">Sign In</h1>
+                    <div class="flex my-2">
+                        <a href="#" class="social-dark"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-dark"><i class="fab fa-google-plus-g"></i></a>
+                        <a href="#" class="social-dark"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <span class="text-gray-400 text-sm">or use your account</span>
+                    <input type="email" placeholder="Email" class="form-input-dark" />
+                    <input type="password" placeholder="Password" class="form-input-dark" />
+                    <div class="flex items-center space-x-3 my-4">
+                        <span id="userToggleText" class="font-semibold text-white">User</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="roleToggle" class="sr-only peer" />
+                            <div class="w-11 h-6 bg-zinc-700 rounded-full peer peer-focus:ring-2 peer-focus:ring-gray-500 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                        </label>
+                        <span id="adminToggleText" class="font-semibold text-gray-500">Admin</span>
+                    </div>
+                    <button type="button" id="signInBtn" class="form-button-dark mt-2">Sign In</button>
+                  </form>
+                </div>
+                <div id="overlayContainer" class="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden transition-transform duration-700 ease-in-out z-40">
+                  <div id="overlay" class="text-white relative bg-gradient-to-r from-blue-900 to-black h-full w-[200%] transition-transform duration-700 ease-in-out -translate-x-1/2">
+                    <div class="absolute flex items-center justify-center flex-col px-10 text-center top-0 h-full w-1/2 -translate-x-[20%]">
+                      <h1 class="font-bold text-3xl">Welcome Back!</h1>
+                      <p class="text-sm my-4">To keep connected with us please login with your personal info</p>
+                      <button class="ghost-button-dark" id="signInOverlayBtn">Sign In</button>
+                    </div>
+                    <div class="absolute flex items-center justify-center flex-col px-10 text-center top-0 right-0 h-full w-1/2 translate-x-0">
+                      <h1 class="font-bold text-3xl">Hello, Friend!</h1>
+                      <p class="text-sm my-4">Enter your personal details and start your journey with us</p>
+                      <button class="ghost-button-dark" id="signUpOverlayBtn">Sign Up</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ======================= DASHBOARD PAGE VIEW ======================= -->
+        <div id="dashboardPage" class="hidden min-h-screen container mx-auto px-6 py-8">
+            <div class="flex justify-between items-center mb-8 border-b border-[#27272a] pb-4">
+                <h1 class="text-xl font-bold text-white tracking-widest" id="dashboardTitle"></h1>
+                <button id="logoutBtn" class="text-gray-400 hover:text-white transition text-xs uppercase">LOGOUT</button>
+            </div>
+            <div id="dashboardContent"></div>
+            <div id="resultsSection" class="hidden">
+                <div class="mb-8 card p-4">
+                    <h3 class="text-lg font-semibold text-white mb-4">// AI PIPELINE STATUS</h3>
+                    <div id="pipelineStatus" class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4 text-xs"></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 card p-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">// TAXONOMIC CLASSIFICATION</h3>
+                        <div id="classificationResult" class="space-y-3 text-sm"></div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">// TAXA ABUNDANCE</h3>
+                        <canvas id="abundanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embedded JavaScript -->
+    <script type="module">
+        // --- 3D Background Setup ---
+        const bgCanvas = document.getElementById('bg-dna-canvas');
+        if (bgCanvas) {
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x000000, 10, 40);
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 40;
+            const renderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            scene.add(new THREE.AmbientLight(0x40a0ff, 0.5));
+            const directionalLight = new THREE.DirectionalLight(0x80c0ff, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            const group = new THREE.Group();
+            const helixRadius = 3, helixHeight = 40, turnCount = 10, basePairs = 150;
+            const createStrand = () => {
+                const curve = new THREE.CatmullRomCurve3(Array.from({ length: 200 }, (_, i) => new THREE.Vector3(helixRadius * Math.cos(i / 199 * turnCount * 2 * Math.PI), i / 199 * helixHeight - helixHeight / 2, helixRadius * Math.sin(i / 199 * turnCount * 2 * Math.PI))));
+                return new THREE.Mesh(new THREE.TubeGeometry(curve, 100, 0.15, 12, false), new THREE.MeshPhongMaterial({ color: 0x0055aa, shininess: 30 }));
+            };
+            const strand1 = createStrand();
+            const strand2 = createStrand();
+            strand2.rotation.y = Math.PI;
+            group.add(strand1, strand2);
+            for (let i = 0; i < basePairs; i++) {
+                const t = i / (basePairs - 1);
+                const angle = t * turnCount * 2 * Math.PI;
+                const y = t * helixHeight - helixHeight / 2;
+                const start = new THREE.Vector3(helixRadius * Math.cos(angle), y, helixRadius * Math.sin(angle));
+                const end = new THREE.Vector3(-helixRadius * Math.cos(angle), y, -helixRadius * Math.sin(angle));
+                const path = new THREE.LineCurve3(start, end);
+                group.add(new THREE.Mesh(new THREE.TubeGeometry(path, 1, 0.08, 8, false), new THREE.MeshPhongMaterial({ color: [0x00aaff, 0x0088cc, 0x006699][i % 3] })));
+            }
+            scene.add(group);
+            const animate = () => {
+                requestAnimationFrame(animate);
+                group.rotation.y += 0.0005;
+                renderer.render(scene, camera);
+            };
+            animate();
+            const handleScroll = () => {
+                const scrollFraction = Math.min(window.scrollY / window.innerHeight, 1);
+                const easedFraction = 1 - Math.pow(1 - scrollFraction, 3);
+                camera.position.z = THREE.MathUtils.lerp(40, 5, easedFraction);
+                camera.position.y = THREE.MathUtils.lerp(0, helixHeight / 4, easedFraction);
+                group.rotation.y += easedFraction * 0.01;
+            };
+            window.addEventListener('scroll', handleScroll, { passive: true });
+        }
+
+        // --- Text Scramble Effect ---
+        const scrambleEl = document.getElementById('scramble-text');
+        if (scrambleEl) {
+            const originalText = "AI-DRIVEN eDNA ANALYSIS";
+            let frameId;
+            const chars = '!<>-_\\/[]{}—=+*^?#_';
+            let frame = 0;
+            const queue = Array.from(originalText).map((to) => ({ to, start: Math.floor(Math.random() * 40), end: Math.floor(Math.random() * 40) + 40 }));
+            const updateScramble = () => {
+                let output = '';
+                let complete = 0;
+                for (let i = 0; i < queue.length; i++) {
+                    const { to, start, end } = queue[i];
+                    if (frame >= end) { complete++; output += to; } 
+                    else if (frame >= start) { output += `<span class="opacity-50">${chars[Math.floor(Math.random() * chars.length)]}</span>`; }
+                }
+                scrambleEl.innerHTML = output;
+                if (complete < queue.length) { frameId = requestAnimationFrame(updateScramble); frame++; }
+            };
+            setTimeout(() => frameId = requestAnimationFrame(updateScramble), 500);
+        }
+
+        // --- Page Navigation and UI Logic ---
+        const homePage = document.getElementById('homePage');
+        const loginPage = document.getElementById('loginPage');
+        const dashboardPage = document.getElementById('dashboardPage');
+        let userRole = 'user';
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            homePage.style.display = 'none';
+            loginPage.style.display = 'flex';
+        });
+        
+        document.getElementById('signInBtn').addEventListener('click', () => {
+            loginPage.classList.add('hidden');
+            dashboardPage.classList.remove('hidden');
+            renderDashboard();
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            dashboardPage.classList.add('hidden');
+            homePage.style.display = 'block';
+            document.getElementById('resultsSection').classList.add('hidden');
+        });
+
+        const roleToggle = document.getElementById('roleToggle');
+        roleToggle.addEventListener('change', (e) => {
+            userRole = e.target.checked ? 'admin' : 'user';
+            document.getElementById('userToggleText').classList.toggle('text-white', userRole === 'user');
+            document.getElementById('adminToggleText').classList.toggle('text-white', userRole === 'admin');
+        });
+        
+        // Animated sign-in panel logic
+        const signUpBtn = document.getElementById('signUpOverlayBtn');
+        const signInBtn = document.getElementById('signInOverlayBtn');
+        const signInPanel = document.getElementById('signInPanel');
+        const signUpPanel = document.getElementById('signUpPanel');
+        const overlayContainer = document.getElementById('overlayContainer');
+
+        signUpBtn.addEventListener('click', () => {
+            overlayContainer.style.transform = 'translateX(-100%)';
+            signInPanel.style.opacity = 0;
+            signUpPanel.style.opacity = 1;
+            signUpPanel.style.zIndex = 20;
+            signInPanel.style.zIndex = 10;
+        });
+        
+        signInBtn.addEventListener('click', () => {
+            overlayContainer.style.transform = 'translateX(0%)';
+            signInPanel.style.opacity = 1;
+            signUpPanel.style.opacity = 0;
+            signUpPanel.style.zIndex = 10;
+            signInPanel.style.zIndex = 20;
+        });
+
+        // --- Dashboard Logic ---
+        const dashboardContent = document.getElementById('dashboardContent');
+        const dashboardTitle = document.getElementById('dashboardTitle');
+        let abundanceChartInstance = null;
+
+        function renderDashboard() {
+            dashboardTitle.textContent = `// ${userRole.toUpperCase()} DASHBOARD`;
+            if (userRole === 'user') {
+                dashboardContent.innerHTML = `
+                    <div class="card p-6 mb-8">
+                        <h2 class="text-lg font-semibold text-white mb-4">// SUBMIT eDNA SEQUENCE</h2>
+                        <textarea id="dnaSequenceInput" rows="4" class="w-full p-3 bg-black border border-zinc-800 focus:ring-1 focus:ring-white outline-none text-sm" placeholder="> Paste raw eDNA sequence here..."></textarea>
+                        <div class="mt-4 text-right">
+                            <button id="analyzeBtn" class="btn-primary font-bold py-2 px-5 text-xs">INITIATE ANALYSIS</button>
+                        </div>
+                    </div>`;
+                document.getElementById('analyzeBtn').addEventListener('click', runAnalysis);
+            } else {
+                dashboardContent.innerHTML = `
+                    <div class="card p-6 mb-8">
+                        <h2 class="text-lg font-semibold text-white mb-4">// ADMIN DATASET UPLOAD</h2>
+                        <input type="file" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:border file:border-white file:text-xs file:font-mono file:uppercase file:bg-transparent file:text-white hover:file:bg-white hover:file:text-black transition-colors"/>
+                    </div>`;
+            }
+        }
+        
+        function runAnalysis() {
+            const resultsSection = document.getElementById('resultsSection');
+            const pipelineStatusContainer = document.getElementById('pipelineStatus');
+            const pipelineSteps = ["PREPROCESSING", "GENE_EXTRACTION", "EMBEDDING", "CLASSIFICATION", "REPORTING"];
+            let currentStep = 0;
+            resultsSection.classList.remove('hidden');
+            pipelineStatusContainer.innerHTML = '';
+            
+            const interval = setInterval(() => {
+                pipelineStatusContainer.innerHTML += `<span class="text-green-400">> ${pipelineSteps[currentStep]} [OK]</span>`;
+                currentStep++;
+                if (currentStep === pipelineSteps.length) {
+                    clearInterval(interval);
+                    populateResults();
+                }
+            }, 800);
+        }
+
+        function populateResults() {
+            document.getElementById('classificationResult').innerHTML = `
+                <div class="flex justify-between"><span>Phylum:</span><span>Annelida</span><span class="text-gray-500">CONF:92%</span></div>
+                <div class="flex justify-between"><span>Class:</span><span>Polychaeta</span><span class="text-gray-500">CONF:88%</span></div>`;
+
+            const ctx = document.getElementById('abundanceChart').getContext('2d');
+            if(abundanceChartInstance) abundanceChartInstance.destroy();
+            abundanceChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Annelida', 'Cnidaria', 'Porifera', 'NOVEL_CLUSTER_A'],
+                    datasets: [{
+                        label: 'Abundance',
+                        data: [45, 22, 15, 8],
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: { x: { ticks: { color: '#9ca3af' }, grid: { color: '#27272a' } }, y: { ticks: { color: '#9ca3af' }, grid: { color: '#27272a' } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
